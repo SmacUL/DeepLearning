@@ -3,16 +3,16 @@
 """
 Created on Sun Apr  1 13:24:53 2018
  
- This program shows how a simple CNN network works.
+这个程序展示了一个简单的CNN模型
 
-# You'd better download mnist.npz dataset first,
-# or you can try the following statement:
+# 在运行这个程序之前，你需要先搞到mnist.npz的数据集
+# 或者在可以翻墙的情况下，你也可以用下面的句子:
 #     (train_images, train_labels), (test_images, test_labels) = \
 #         mnist.load_data()
-# to replace the statement:
+# 来代替程序中:
 #     (train_images, train_labels), (test_images, test_labels) = \
 #         load_mnist_data('./mnist.npz')
-# if you are able to connect the network outside.
+
  
 @author: smac-9
 """
