@@ -170,8 +170,8 @@ def forecast_evalute(model, x_test, y_test):
     """
     y_test_pre = model.predict(x_test, batch_size=32)
     
-#    print(y_test_pre)
-#    print(y_test)
+    print(y_test_pre)
+    print(y_test)
     
     NMSE = 0
     for i in range(y_test.shape[0]):
@@ -221,9 +221,9 @@ if __name__ == "__main__":
 
     
     NMSE_list = []
-    for i, value in enumerate(range(100, 501, 50)):
-        test_len = value
-        fe_gap = 5
+    for i, value in enumerate(range(1, 10, 1)):
+        test_len = 100
+        fe_gap = value
         fo_gap = 1
         # every kind of suituation will be run three times
         # to avoid occasionality,
@@ -234,7 +234,6 @@ if __name__ == "__main__":
                     data, test_len=test_len, fe_gap=fe_gap, fo_gap=fo_gap
                 )
             model = create_model((1, 5 * fe_gap))
-            fe_gap = i
             train_model(model, x_train, y_train, epochs=epochs)
             NMSE = forecast_evalute(model, x_test, y_test)
             NMSE_list.append(NMSE)

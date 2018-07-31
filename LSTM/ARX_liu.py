@@ -191,9 +191,9 @@ if __name__ == "__main__":
     
     
     NMSE_list = []
-    for i, value in enumerate(range(100, 501, 50)):
-        test_len = value
-        fe_gap = 5
+    for i, value in enumerate(range(1, 10, 1)):
+        test_len = 100
+        fe_gap = value
         fo_gap = 1
         # every kind of suituation will be run three times
         # to avoid occasionality,
