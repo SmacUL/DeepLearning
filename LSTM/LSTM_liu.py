@@ -16,6 +16,16 @@ Program Modified on 2018年 07月 31日 星期二 10:42:52 CST by smac-9
     In this way, 
     the LSTM model is able to get more smooth and better result.
 
+Program Modified on 2018年 08月 01日 星期三 14:50:14 CST by smac-9
+:
+    Add method forecast_devide.
+
+Program Modified on 2018年 08月 03日 星期五 09:06:59 CST by smac-9
+:
+    Add method create_model_LSTMCNN.
+    The model created by this method
+    will contain a basic LSTM mod and a basic CNN mod.
+
 @author: smac-9
 """
 
@@ -51,11 +61,8 @@ def read_data():
 
 def data_stabilize(data):
     """ 数据平稳处理
-    
-    """
-    
+    """ 
 #""" method A """
-
     for i in range(len(data[0])):
         median = []
         for j in range(len(data)):
@@ -63,16 +70,20 @@ def data_stabilize(data):
         
         min_num = min(median)
         max_num = max(median)
-
+        
+        # data * (max_num - min_num) + min_num 
+        
+#        print(min_num, max_num)
+        
         for j in range(len(data)):
             a = (data[j][i] - min_num) / (max_num - min_num)
             if a <= 0:
                 a = abs(a) + 1
             data[j][i] = a
     return data
-    
-    
-    
+
+
+
 #""" method B """
 
 #    new_data = []
@@ -148,14 +159,31 @@ def create_trts_set(data, test_len, fe_gap=5, fo_gap=1):
 
 def create_model(input_shape):
     """ create empty LSTM model
-    """
+    """ 
     model = Sequential()
-    model.add(LSTM(units=200, dropout=0, input_shape=input_shape))
+    model.add(LSTM(units=40, dropout=0, input_shape=input_shape))
     model.add(Dense(1, activation='sigmoid'))
 #    model.compile(loss='mean_squared_error', optimizer='adam')  
     model.compile(loss='binary_crossentropy', optimizer='rmsprop')  
     return model
     
+
+
+def create_model_LSTMCNN(input_shape):
+    model = Sequential()
+    model.add(LSTM(units=40, dropout=0, input_shape=input_shape))
+    
+    model.add(Reshape((40, 1)))
+    model.add(layers.Conv1D(16, (20), activation='relu'))
+    model.add(layers.Dropout(0.2))
+    model.add(layers.Conv1D(16, (20), activation='relu'))
+    model.add(layers.Flatten())
+    model.add(layers.Dense(16, activation='relu'))
+    model.add(layers.Dense(1, activation='sigmoid'))
+    
+    model.compile(loss='binary_crossentropy', optimizer='rmsprop')  
+    return model
+
 
 
 def train_model(model, x_train, y_train, epochs=100):
@@ -173,6 +201,9 @@ def forecast_evalute(model, x_test, y_test):
 #    print(y_test_pre)
 #    print(y_test)
     
+    plt.plot(np.array(y_test_pre));plt.plot(np.array(y_test))
+    
+    
     NMSE = 0
     for i in range(y_test.shape[0]):
         a = (y_test[i] - y_test_pre[i, 0]) * (y_test[i] - y_test_pre[i, 0])
@@ -183,6 +214,36 @@ def forecast_evalute(model, x_test, y_test):
     NMSE = (NMSE) / len(x_test) / len(x_test)    
     return NMSE
 
+
+
+def forecast_devide(model, x_test, y_test):
+    """
+    """
+    y_test_pre = model.predict(x_test, batch_size=32)
+    plt.plot(np.array(y_test_pre));plt.plot(np.array(y_test))
+
+    class_gap = 0.005
+    spe_num = sum(y_test) / len(y_test)
+    y_test_pre_f = []
+    for i in range(len(y_test_pre)):
+        if y_test_pre[i] > (spe_num + class_gap):
+            y_test_pre_f.append(1)
+        elif y_test_pre[i] < (spe_num - class_gap):
+            y_test_pre_f.append(-1)
+        else:
+            y_test_pre_f.append(0)
+    
+    y_test_f = []
+    for i in range(len(y_test)):
+        if y_test[i] > (spe_num + class_gap):
+            y_test_f.append(1)
+        elif y_test[i] < (spe_num - class_gap):
+            y_test_f.append(-1)
+        else:
+            y_test_f.append(0)
+    
+    cm = confusion_matrix(y_test_pre_f, y_test_f)
+    return cm
 
 
 
@@ -196,34 +257,48 @@ from keras.models import Sequential
 from keras.layers import Dense, Dropout
 from keras.layers import Embedding
 from keras.layers import LSTM
+from keras.layers import Reshape
+from keras import layers
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import confusion_matrix
 
 if __name__ == "__main__":
     data = read_data()
     data = data_stabilize(data)
     epochs = 100
-    
-    
-#    test_len = 100
-#    fe_gap = 3
+
+#    test_len = 300
+#    fe_gap = 1
 #    fo_gap = 1
 #    
 #    x_train, y_train, x_test, y_test = \
 #        create_trts_set(
 #            data, test_len=test_len, fe_gap=fe_gap, fo_gap=fo_gap
 #        )
-#    model = create_model((1, 5 * fe_gap))
+#    model = create_model((1, len(data[0]) * fe_gap))
 #    train_model(model, x_train, y_train, epochs=epochs)
-#    NMSE = forecast_evalute(model, x_test, y_test)
 #    
-#    print(NMSE)    
-    
-    
+#    NMSE = forecast_evalute(model, x_test, y_test)
+#    print(NMSE)
 
+#    cm = forecast_devide(model, x_test, y_test)
+#    print(cm)
+#    print("回测天数", test_len)
+#    print('上涨召回率',cm[0,0]/sum(cm[0,:]))
+#    print('平盘召回率',cm[1,1]/sum(cm[1,:]))
+#    print('下跌召回率',cm[2,2]/sum(cm[2,:]))
+#    print('上涨精度',cm[0,0]/sum(cm[:,0]))
+#    print('平盘精度',cm[1,1]/sum(cm[:,1]))
+#    print('下跌精度',cm[2,2]/sum(cm[:,2]))
+#    print('总体正确率率',(cm[0,0]+cm[1,1]+cm[2,2])/sum(sum(cm)))
     
+   
+
+
     NMSE_list = []
-    for i, value in enumerate(range(100, 501, 50)):
+    for i, value in enumerate(range(100, 501, 100)):
         test_len = value
-        fe_gap = 5
+        fe_gap = 1
         fo_gap = 1
         # every kind of suituation will be run three times
         # to avoid occasionality,
@@ -234,7 +309,6 @@ if __name__ == "__main__":
                     data, test_len=test_len, fe_gap=fe_gap, fo_gap=fo_gap
                 )
             model = create_model((1, 5 * fe_gap))
-            fe_gap = i
             train_model(model, x_train, y_train, epochs=epochs)
             NMSE = forecast_evalute(model, x_test, y_test)
             NMSE_list.append(NMSE)
