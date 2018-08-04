@@ -22,7 +22,10 @@
     我们将每一列数据称为**数据列**(*data column*)（共五列），
     并以数据列为单位，
     将列中的每个**数据**(*data*)都按下方的公式进行归一化处理：
-    $$ data[i][j] = \frac {data[i][j] - min(data\_col[i])} {max(data\_col[i]) - min(data\_col[i])} $$
+    <!-- $$ data[i][j] = \frac {data[i][j] - min(data\_col[i])} {max(data\_col[i]) - min(data\_col[i])} $$ -->
+    ![g1](./pic/g1.gif)
+
+
     - data[i][j] 表示第i列第j行的数据
     - min(data_col[i]) 表示取第i列的最小值
     - max(data_col[i]) 表示取第i列的最大值
@@ -46,7 +49,8 @@
 
     假设我们能够获得的数据组一共有a个，特征提取步长为b，预测步长为c，
     那么获得的样本数量共
-    $$ num(sam) = a - b - c + 1 $$
+    <!-- $$ num(sam) = a - b - c + 1 $$ -->
+    ![g2](./pic/g2.gif)  
     对应的，标签数量等于样本数量。
 
     ![qwer](./pic/2.png)
@@ -65,7 +69,8 @@
 模型训练结束之后，再导入测试样本集，我们能够获得**预测测试标签集**(*predict test label set*)
 最后我们使用 NMSE 算法来分别将两个模型预测的结果与各自的测试样本集进行比较评估  
 使用的 NMSE 算法：  
-$$ NMSE =  \frac{1}{(len(te\_lab))^{2}} * \sum {\frac{(te\_lab[i] - pre\_te\_lab[i])^{2}}{(te\_lab[i] - mean(te\_lab))^{2}}} $$
+<!-- $$ NMSE =  \frac{1}{(len(te\_lab))^{2}} * \sum {\frac{(te\_lab[i] - pre\_te\_lab[i])^{2}}{(te\_lab[i] - mean(te\_lab))^{2}}} $$ -->
+![g3](./pic/g3.gif)
 - len(te_lab)：表示获得测试标签集的集合长度
 - mean(te_lab)：表示获得测试标签集的平均值
 
@@ -86,4 +91,4 @@ $$ NMSE =  \frac{1}{(len(te\_lab))^{2}} * \sum {\frac{(te\_lab[i] - pre\_te\_lab
 由于它受到影响因素比较多，且数据量不是很充足，
 使用LSTM来预测数据不能很好地发挥性能，预测结果显得不是特别理想，
 部分数据出现了比较大的波动，
-但是总体来说，还是完成了基本任务
+但是总体来说，还是完成了基本任务。
