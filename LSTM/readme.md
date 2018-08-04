@@ -5,7 +5,7 @@
 ## 数据组成说明
 我们抽取源数据中的五列（源数据共七列），组成如下：
 
-| 列名 | open | close |　high | low | volume |
+| 列名 | open | close | high | low | volume |
 | --- | ----- | ----- | ----- | ----- | ----- |
 | 解释 | 开盘价 | 收盘价 | 最高价 | 最低价 | 成交量 |
 
@@ -23,8 +23,10 @@
     
     我们将每一列数据称为**数据列**(*data column*)（共五列），
     并以数据列为单位，
-    将列中的每个**数据**(*data*)都按下方的公式进行归一化处理：
-    $$ data[i][j] = \frac {data[i][j] - min(data\_col[i])} {max(data\_col[i]) - min(data\_col[i])} $$
+    将列中的每个**数据**(*data*)都按下方的公式进行归一化处理：  
+    
+    $$ data[i][j] = \frac {data[i][j] - min(data\_col[i])} {max(data\_col[i]) - min(data\_col[i])} $$  
+    
     - data[i][j] 表示第i列第j行的数据
     - min(data_col[i]) 表示取第i列的最小值
     - max(data_col[i]) 表示取第i列的最大值
@@ -40,6 +42,7 @@
         预测步长 = 需要预测的数据单元的位置 - 对应的样本的最后一个数据单元的位置
 
     我们将一个特征数据组（本质是矩阵）转化为一个向量，如下图：
+    <br>
     ![asdf](./pic/1.png)
 
     并将此向量视作一个样本。  
@@ -47,8 +50,8 @@
     这里，我们将每个样本对应的数据组中的收盘价作为此样本的标签。
 
     假设我们能够获得的数据组一共有a个，特征提取步长为b，预测步长为c，
-    那么获得的样本数量共
-    $$ num(sam) = a - b - c + 1 $$
+    那么获得的样本数量共  
+    $$ num(sam) = a - b - c + 1 $$  
     对应的，标签数量等于样本数量。
 
     ![qwer](./pic/2.png)
@@ -66,8 +69,10 @@
 ## 结果评估
 模型训练结束之后，再导入测试样本集，我们能够获得**预测测试标签集**(*predict test label set*)
 最后我们使用 NMSE 算法来分别将两个模型预测的结果与各自的测试样本集进行比较评估  
-使用的 NMSE 算法：  
-$$ NMSE =  \frac{1}{(len(te\_lab))^{2}} * \sum {\frac{(te\_lab[i] - pre\_te\_lab[i])^{2}}{(te\_lab[i] - mean(te\_lab))^{2}}} $$
+使用的 NMSE 算法：   
+
+$$ NMSE =  \frac{1}{(len(te\_lab))^{2}} * \sum {\frac{(te\_lab[i] - pre\_te\_lab[i])^{2}}{(te\_lab[i] - mean(te\_lab))^{2}}} $$  
+
 - len(te_lab)：表示获得测试标签集的集合长度
 - mean(te_lab)：表示获得测试标签集的平均值
 
@@ -75,7 +80,7 @@ $$ NMSE =  \frac{1}{(len(te\_lab))^{2}} * \sum {\frac{(te\_lab[i] - pre\_te\_lab
 ## 模型预测结果
 以下就是两个模型不同测试样本数量下的NMSE结果
 
-| 样本数量 | LSTM NMSE | ARX NMSE |
+| test sample number | LSTM NMSE | ARX NMSE |
 | -- | -- | -- |
 | 100     |	0.0598958512 |	0.0680873517 |
 | 200 	  | 0.0039414761 |	0.0074136101 |
