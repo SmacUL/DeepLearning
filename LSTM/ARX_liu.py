@@ -237,20 +237,19 @@ if __name__ == "__main__":
     data = read_data()
     data = data_stabilize(data)
     
-
-#    test_len = 300
-#    fe_gap = 1
-#    fo_gap = 1
-#    
-#    x_train, y_train, x_test, y_test = \
-#        create_trts_set(
-#                data, test_len=test_len, fe_gap=fe_gap, fo_gap=fo_gap
-#        )
-#    model = create_model()
-#    res = train_model(model, x_train, y_train)
-#    
-#    NMSE = forecast_evalute(res, x_test, y_test)
-#    print(NMSE)    
+    test_len = 300
+    fe_gap = 5
+    fo_gap = 1
+    
+    x_train, y_train, x_test, y_test = \
+        create_trts_set(
+                data, test_len=test_len, fe_gap=fe_gap, fo_gap=fo_gap
+        )
+    model = create_model()
+    res = train_model(model, x_train, y_train)
+    
+    NMSE = forecast_evalute(res, x_test, y_test)
+    print(NMSE)    
     
     
 #    cm = forecast_devide(res, x_test, y_test)
@@ -268,32 +267,32 @@ if __name__ == "__main__":
     
     
     
-    NMSE_list = []
-    for i, value in enumerate(range(1, 10, 1)):
-        test_len = 100
-        fe_gap = value
-        fo_gap = 1
-        # every kind of suituation will be run three times
-        # to avoid occasionality,
-        # then it will calculate the mean value of these three datas
-        for j in range(3):
-            x_train, y_train, x_test, y_test = \
-                create_trts_set(
-                    data, test_len=test_len, fe_gap=fe_gap, fo_gap=fo_gap
-                )
-            model = create_model()
-            res = train_model(model, x_train, y_train)
-            NMSE = forecast_evalute(res, x_test, y_test)
-            NMSE_list.append(NMSE)
-            
-        
-        sum_num = 0
-        for j in range(i * 4, i * 4 + 3):
-            sum_num += NMSE_list[j]
-        NMSE_list.append(sum_num / 3)
-    
-    for i in range(len(NMSE_list)):
-        print(NMSE_list[i])
+#    NMSE_list = []
+#    for i, value in enumerate(range(100, 501, 100)):
+#        test_len = value
+#        fe_gap = 1
+#        fo_gap = 1
+#        # every kind of suituation will be run three times
+#        # to avoid occasionality,
+#        # then it will calculate the mean value of these three datas
+#        for j in range(3):
+#            x_train, y_train, x_test, y_test = \
+#                create_trts_set(
+#                    data, test_len=test_len, fe_gap=fe_gap, fo_gap=fo_gap
+#                )
+#            model = create_model()
+#            res = train_model(model, x_train, y_train)
+#            NMSE = forecast_evalute(res, x_test, y_test)
+#            NMSE_list.append(NMSE)
+#            
+#        
+#        sum_num = 0
+#        for j in range(i * 4, i * 4 + 3):
+#            sum_num += NMSE_list[j]
+#        NMSE_list.append(sum_num / 3)
+#    
+#    for i in range(len(NMSE_list)):
+#        print(NMSE_list[i])
     
     
    

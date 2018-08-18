@@ -127,13 +127,12 @@ def create_trts_set(data, test_len, fe_gap=5, fo_gap=1):
                 group.append(data[j][k])
         group_all.append(group)
     
-    
-    
     x_train = group_all[:-test_len]
     x_test = group_all[-test_len:]
-    x_train = np.reshape(x_train, (len(x_train), 1, len(x_train[0])))
-    x_test = np.reshape(x_test, (len(x_test), 1, len(x_test[0])))
     
+    
+    x_train = np.reshape(x_train, (len(x_train), fe_gap, len(data[0])))
+    x_test = np.reshape(x_test, (len(x_test), fe_gap, len(data[0])))
     
     label = data[fe_gap + fo_gap - 1:]
     train_label = label[:-test_len]
@@ -152,7 +151,6 @@ def create_trts_set(data, test_len, fe_gap=5, fo_gap=1):
     y_train = np.array(y_train)
     y_test = np.array(y_test)
 
-
     return x_train, y_train, x_test, y_test
 
 
@@ -160,6 +158,7 @@ def create_trts_set(data, test_len, fe_gap=5, fo_gap=1):
 def create_model(input_shape):
     """ create empty LSTM model
     """ 
+    # input_shape = (1, len(data[0]) * fe_gap);
     model = Sequential()
     model.add(LSTM(units=40, dropout=0, input_shape=input_shape))
     model.add(Dense(1, activation='sigmoid'))
@@ -203,13 +202,11 @@ def forecast_evalute(model, x_test, y_test):
     
     plt.plot(np.array(y_test_pre));plt.plot(np.array(y_test))
     
-    
     NMSE = 0
     for i in range(y_test.shape[0]):
         a = (y_test[i] - y_test_pre[i, 0]) * (y_test[i] - y_test_pre[i, 0])
         b = (y_test[i] - y_test.mean()) * (y_test[i] - y_test.mean())
         NMSE += a / b
-    
     
     NMSE = (NMSE) / len(x_test) / len(x_test)    
     return NMSE
@@ -268,14 +265,14 @@ if __name__ == "__main__":
     epochs = 100
 
     test_len = 300
-    fe_gap = 1
+    fe_gap = 5
     fo_gap = 1
     
     x_train, y_train, x_test, y_test = \
         create_trts_set(
             data, test_len=test_len, fe_gap=fe_gap, fo_gap=fo_gap
         )
-    model = create_model((1, len(data[0]) * fe_gap))
+    model = create_model((fe_gap, len(data[0])))
     train_model(model, x_train, y_train, epochs=epochs)
     
     NMSE = forecast_evalute(model, x_test, y_test)
