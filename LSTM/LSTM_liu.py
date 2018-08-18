@@ -265,7 +265,7 @@ if __name__ == "__main__":
     epochs = 100
 
     test_len = 300
-    fe_gap = 5
+    fe_gap = 30
     fo_gap = 1
     
     x_train, y_train, x_test, y_test = \
