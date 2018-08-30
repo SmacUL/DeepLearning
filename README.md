@@ -9,8 +9,8 @@
 ## LSTM
 
 - pic: 存放readme.md中用到的图片
-- ARX_liu.py: 利用ARX模型来预测股票收盘价格
-- LSTM_liu.py: 利用LSTM模型来预测股票收盘价格
+- ARX.py: 利用ARX模型来预测股票收盘价格
+- LSTM.py: 利用LSTM模型来预测股票收盘价格
 - readme.md: 对ARX和LSTM模型的说明，将ARX和LSTM进行对比
 
 ## dissertation
